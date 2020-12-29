@@ -3,6 +3,10 @@
   "version": "1.0.1",
   "description": "This node module lets you communicate with a server through the UDP RCON protocol.",
   "main": "index.js",
+  "keywords": [
+    "udp",
+    "rcon"
+  ],
   "scripts": {
     "example": "node example/index.js",
     "build": "webpack"
