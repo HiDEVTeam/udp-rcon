@@ -2,29 +2,63 @@
 
 This node module lets you communicate with a server through the UDP RCON protocol.
 
+## Install module
+
+```
+npm install @hidev/udp-rcon
+```
+
+
+## Import module
+
+```js
+const UDP_RCON = require("@hidev/udp-rcon");
+```
+
+
+## Full example
+
+```js
+const UDP_RCON = require("@hidev/udp-rcon");
+
+// RCON configuration
+const server_ip = "ENTER_RCON_IP_HERE";
+const rcon_port = "ENTER_RCON_PORT_HERE";
+const rcon_password = "ENTER_RCON_PASSWORD_HERE";
+let my_rcon = new UDP_RCON(server_ip, rcon_port, rcon_password);
+
+const rcon_success = (msg) => {
+  console.log("Message received:", msg);
+};
+
+const rcon_error = (err) => {
+  console.log(`Error: \n${err.stack}`);
+};
+
+// Commands
+let rcon_instance = my_rcon.send("say Hello!", rcon_success, rcon_error);
+```
+
+
 ## Build module
 
 ```
 npm run build
 ```
 
-## Import module
-
-```js
-const { UDP_RCON } = require("../dist/bundle");
-```
 
 ## Structure
 
 * dist : Built code
 * src : Source code
 
+
 ## Functionalities
 
 ### Define a new RCON connection
 
 ```js
-let my_rcon = new UDP_RCON.CONNECT(ip, port, password);
+let my_rcon = new UDP_RCON(ip, port, password);
 ```
 
 ### Send a command
@@ -82,6 +116,7 @@ rcon_instance.client.setEvent("message", (msg) => {});
 rcon_instance.client.setEvent("error", (err) => {});
 ```
 
+
 ## Author
 
-Made by Baptiste Miquel for HiDEV.
+Made by Baptiste Miquel for HiDEV under the MIT license.

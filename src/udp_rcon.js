@@ -3,11 +3,10 @@
 const dgram = require("dgram");
 
 class UDP_RCON {
-  constructor(_ip, _port, _password, _game = null) {
+  constructor(_ip, _port, _password) {
     this.ip = _ip;
     this.port = _port;
     this.password = _password;
-    this.game = _game;
   }
   send(cmd, success_cb = null, error_cb = null) {
     // Set a new events instance
@@ -44,37 +43,32 @@ class UDP_RCON {
     return buffer;
   }
   sendUDPSocket(buffer, cmd, udp_instance) {
-    const client = dgram.createSocket("udp4");
+    const clientSocket = dgram.createSocket("udp4");
 
-    client.on("error", (err) => {
-      client.close();
+    clientSocket.on("error", (err) => {
+      clientSocket.close();
       udp_instance.client.callEvent("error", err);
     });
 
-    client.on("message", (msg, rinfo) => {
+    clientSocket.on("message", (msg, rinfo) => {
       const slicedMsg = msg.slice(4); // Remove first 4 bytes
-      client.close();
+      clientSocket.close();
       udp_instance.client.callEvent("message", slicedMsg.toString());
     });
 
-    client.on("listening", () => {
-      const address = client.address();
+    clientSocket.on("listening", () => {
+      const address = clientSocket.address();
       udp_instance.client.callEvent("listening", address);
     });
 
     // Send to RCON
-    client.connect(this.port, this.ip, (err) => {
-      err && udp_instance.sender.callEvent("error", err);
+    clientSocket.send(buffer, this.port, this.ip, (err) => {
       udp_instance.sender.callEvent("connect");
-      client.send(buffer, (err) => {
-        udp_instance.sender.callEvent("sended", buffer);
-        err && udp_instance.sender.callEvent("error", err);
-      });
+      udp_instance.sender.callEvent("sended", buffer);
+      err && udp_instance.sender.callEvent("error", err);
     });
+
     return udp_instance;
-  }
-  setGame(game) {
-    this.game = game;
   }
 }
 
@@ -109,4 +103,4 @@ class UDP_CLIENT extends UDP_EVENTS_MANAGER {
   }
 }
 
-exports.CONNECT = UDP_RCON;
+module.exports = UDP_RCON;
