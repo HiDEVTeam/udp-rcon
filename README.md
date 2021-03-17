@@ -49,7 +49,7 @@ npm run build
 
 ## Structure
 
-* dist : Built code
+* lib : Built code
 * src : Source code
 
 

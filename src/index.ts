@@ -1,14 +1,18 @@
-// UDP RCON
-
+import { EventReturn, EventCallback, Events } from "./types";
 const dgram = require("dgram");
 
 class UDP_RCON {
-  constructor(_ip, _port, _password) {
+  ip: string;
+  port: string;
+  password: string;
+  
+  constructor(_ip: string, _port: string, _password: string) {
     this.ip = _ip;
     this.port = _port;
     this.password = _password;
   }
-  send(cmd, success_cb = null, error_cb = null) {
+
+  send(cmd: string, success_cb?: EventCallback, error_cb?: EventCallback): UDP_INSTANCE {
     // Set a new events instance
     let udp_instance = new UDP_INSTANCE();
     success_cb && udp_instance.client.setEvent("message", success_cb);
@@ -17,9 +21,10 @@ class UDP_RCON {
     // Create RCON buffer
     let buffer = this.initBuffer(cmd);
 
-    return this.sendUDPSocket(buffer, cmd, udp_instance);
+    return this.sendUDPSocket(buffer, udp_instance);
   }
-  initBuffer(data) {
+
+  initBuffer(data: string): Buffer {
 
     // TODO: Challenge token
 
@@ -42,15 +47,16 @@ class UDP_RCON {
 
     return buffer;
   }
-  sendUDPSocket(buffer, cmd, udp_instance) {
+
+  sendUDPSocket(buffer: Buffer, udp_instance: UDP_INSTANCE): UDP_INSTANCE {
     const clientSocket = dgram.createSocket("udp4");
 
-    clientSocket.on("error", (err) => {
+    clientSocket.on("error", (err: string) => {
       clientSocket.close();
       udp_instance.client.callEvent("error", err);
     });
 
-    clientSocket.on("message", (msg, rinfo) => {
+    clientSocket.on("message", (msg: string) => {
       const slicedMsg = msg.slice(4); // Remove first 4 bytes
       clientSocket.close();
       udp_instance.client.callEvent("message", slicedMsg.toString());
@@ -62,7 +68,7 @@ class UDP_RCON {
     });
 
     // Send to RCON
-    clientSocket.send(buffer, this.port, this.ip, (err) => {
+    clientSocket.send(buffer, this.port, this.ip, (err: string) => {
       udp_instance.sender.callEvent("connect");
       udp_instance.sender.callEvent("sended", buffer);
       err && udp_instance.sender.callEvent("error", err);
@@ -73,6 +79,9 @@ class UDP_RCON {
 }
 
 class UDP_INSTANCE {
+  sender: UDP_SENDER;
+  client: UDP_CLIENT;
+
   constructor() {
     this.sender = new UDP_SENDER();
     this.client = new UDP_CLIENT();
@@ -80,15 +89,20 @@ class UDP_INSTANCE {
 }
 
 class UDP_EVENTS_MANAGER {
+  events: Events;
+
   constructor() {
     this.events = {};
   }
-  setEvent(name, event) {
+
+  setEvent(name: string, event: EventCallback) {
     this.events[name] = event;
   }
-  callEvent(name, args = null) {
+  
+  callEvent(name: string, args?: EventReturn) {
     this.events[name] && this.events[name](args);
   }
+
 }
 
 class UDP_SENDER extends UDP_EVENTS_MANAGER {

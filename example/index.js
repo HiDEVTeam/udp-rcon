@@ -1,6 +1,7 @@
 // Example of communication with a FiveM server
 
-const UDP_RCON = require("@hidev/udp-rcon");
+// const UDP_RCON = require("@hidev/udp-rcon");
+const UDP_RCON = require("../lib");
 
 // RCON configuration
 const server_ip = "ENTER_RCON_IP_HERE";

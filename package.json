@@ -1,27 +1,31 @@
 {
   "name": "@hidev/udp-rcon",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "This node module lets you communicate with a server through the UDP RCON protocol.",
-  "main": "src/udp_rcon.js",
+  "main": "lib/index.js",
+  "types": "lib",
   "keywords": [
     "udp",
     "rcon",
-    "network"
+    "udp rcon",
+    "network",
+    "udp connection",
+    "udp protocol",
+    "rcon protocol"
   ],
   "scripts": {
     "example": "node example/index.js",
-    "build": "webpack"
+    "prepare": "npm run build",
+    "build": "rm -rf lib && tsc -p ."
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.2.2",
-    "babel-preset-env": "^1.7.0",
-    "webpack": "^5.10.0",
-    "webpack-cli": "^4.3.0"
+    "@types/node": "^14.14.34",
+    "typescript": "^4.2.3"
   },
+  "files": [
+    "lib/**/*"
+  ],
   "directories": {
     "lib": "src",
     "example": "example"
