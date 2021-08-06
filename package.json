@@ -1,6 +1,6 @@
 {
   "name": "@hidev/udp-rcon",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "This node module lets you communicate with a server through the UDP RCON protocol.",
   "main": "lib/index.js",
   "types": "lib",
