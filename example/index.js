@@ -52,7 +52,7 @@ rcon_instance1.client.setEvent("listening", (address) => {
 });
 
 // Overwrite rcon_success => When a message is received
-// rcon_instance1.client.setEvent("message", rcon_success);
+rcon_instance1.client.setEvent("message", rcon_success);
 
 // Overwrite rcon_error => When an error occured with the message received
-// rcon_instance1.client.setEvent("error", rcon_error);
+rcon_instance1.client.setEvent("error", rcon_error);
