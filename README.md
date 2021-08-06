@@ -12,14 +12,14 @@ npm install @hidev/udp-rcon
 ## Import module
 
 ```js
-const UDP_RCON = require("@hidev/udp-rcon");
+import { UDP_RCON } from "@hidev/udp-rcon";
 ```
 
 
 ## Full example
 
 ```js
-const UDP_RCON = require("@hidev/udp-rcon");
+import { UDP_RCON } from "@hidev/udp-rcon";
 
 // RCON configuration
 const server_ip = "ENTER_RCON_IP_HERE";
