@@ -1,18 +1,55 @@
 import { EventReturn, EventCallback, Events } from "./types";
 const dgram = require("dgram");
 
-class UDP_RCON {
+export interface UDP_RCON {
+  /**
+ * Send a command to the RCON server
+ * @param cmd The command to send
+ * @param success_cb The callback to execute on success
+ * @param error_cb The callback to execute on error
+ * @returns An instance of the UDP client socket that can be used to call custom events on
+ */
+  send(cmd: string, success_cb?: EventCallback, error_cb?: EventCallback): UDP_INSTANCE;
+}
+
+export interface UDP_INSTANCE {
+  /**
+   * Events that are triggered when sending the event
+   */
+  sender: UDP_SENDER;
+  /**
+   * Events that are triggered when receiving the event
+   */
+  client: UDP_CLIENT;
+}
+
+export interface UDP_EVENTS_MANAGER {
+  /**
+   * The list of events that can be triggered
+   */
+  events: Events;
+  /**
+   * Set a new event defined by a name and a callback
+   */
+  setEvent(name: string, event: EventCallback): void;
+  /**
+   * Call a specific event by its name
+   */
+  callEvent(name: string, args?: EventReturn): void;
+}
+
+export class UDP_RCON {
   ip: string;
   port: string;
   password: string;
-  
+
   constructor(_ip: string, _port: string, _password: string) {
     this.ip = _ip;
     this.port = _port;
     this.password = _password;
   }
 
-  send(cmd: string, success_cb?: EventCallback, error_cb?: EventCallback): UDP_INSTANCE {
+  public send(cmd: string, success_cb?: EventCallback, error_cb?: EventCallback): UDP_INSTANCE {
     // Set a new events instance
     let udp_instance = new UDP_INSTANCE();
     success_cb && udp_instance.client.setEvent("message", success_cb);
@@ -24,7 +61,7 @@ class UDP_RCON {
     return this.sendUDPSocket(buffer, udp_instance);
   }
 
-  initBuffer(data: string): Buffer {
+  private initBuffer(data: string): Buffer {
 
     // TODO: Challenge token
 
@@ -48,7 +85,7 @@ class UDP_RCON {
     return buffer;
   }
 
-  sendUDPSocket(buffer: Buffer, udp_instance: UDP_INSTANCE): UDP_INSTANCE {
+  private sendUDPSocket(buffer: Buffer, udp_instance: UDP_INSTANCE): UDP_INSTANCE {
     const clientSocket = dgram.createSocket("udp4");
 
     clientSocket.on("error", (err: string) => {
@@ -78,7 +115,7 @@ class UDP_RCON {
   }
 }
 
-class UDP_INSTANCE {
+export class UDP_INSTANCE {
   sender: UDP_SENDER;
   client: UDP_CLIENT;
 
@@ -88,7 +125,7 @@ class UDP_INSTANCE {
   }
 }
 
-class UDP_EVENTS_MANAGER {
+export class UDP_EVENTS_MANAGER {
   events: Events;
 
   constructor() {
@@ -98,7 +135,7 @@ class UDP_EVENTS_MANAGER {
   setEvent(name: string, event: EventCallback) {
     this.events[name] = event;
   }
-  
+
   callEvent(name: string, args?: EventReturn) {
     this.events[name] && this.events[name](args);
   }
@@ -116,5 +153,3 @@ class UDP_CLIENT extends UDP_EVENTS_MANAGER {
     super();
   }
 }
-
-module.exports = UDP_RCON;
